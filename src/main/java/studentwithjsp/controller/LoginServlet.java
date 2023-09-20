@@ -6,9 +6,11 @@ import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.hibernate.dialect.RDMSOS2200Dialect;
 
@@ -44,6 +46,12 @@ protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws S
 		if(student.getPassword().equals(password)) {
 //			is correct
 //			login success
+			
+			Cookie cookie=new Cookie("nameofthestudentwhologgein", student.getName());
+			resp.addCookie(cookie);
+			
+			HttpSession httpSession=req.getSession();
+			httpSession.setAttribute("namewhologgedin", student.getName());
 			
 			List<Student> list=studentDao.getAllStudents();
 			req.setAttribute("listofstudents",list );

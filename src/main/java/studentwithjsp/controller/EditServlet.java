@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,46 +35,28 @@ public class EditServlet extends HttpServlet{
         student.setPhone(phone);		
 		
 		StudentDao studentDao=new StudentDao();
+		studentDao.updateStudent(student);
 		
-		List<Student> list=studentDao.getAllStudents();
-		boolean value=false;
-		for(Student student1:list) {
-			if(student1.getEmail().equals(email)) {
-				value=true;
+		
+		Cookie[] cookies=req.getCookies();
+		String nameofthestudentwhologgedinandchangedthedata=null;
+		for(Cookie cookie:cookies) {
+			if(cookie.getName().equals("nameofthestudentwhologgein")) {
+				nameofthestudentwhologgedinandchangedthedata=cookie.getValue();
 				break;
 			}
-		}
-		if(value) {
-//			email already present
-			req.setAttribute("message", "EMAIL ALREADY EXIST");
-			req.setAttribute("student", studentDao.findstudentById(id));
-			RequestDispatcher dispatcher=req.getRequestDispatcher("edit.jsp");
-			dispatcher.include(req, resp);
 			
-		}else {
-//			email is not present in the database
-//			i should allow him to signup
-			studentDao.updateStudent(student);
-			req.setAttribute("listofstudents", studentDao.getAllStudents());
-			RequestDispatcher dispatcher=req.getRequestDispatcher("display.jsp");
-			dispatcher.forward(req, resp);
 		}
 		
 		
 		
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
+		req.setAttribute("namewhochangedthedata", nameofthestudentwhologgedinandchangedthedata);
+		req.setAttribute("listofstudents", studentDao.getAllStudents());
+		RequestDispatcher dispatcher=req.getRequestDispatcher("display.jsp");
+		dispatcher.forward(req, resp);
 	
-		
-		
 	}
 
 }

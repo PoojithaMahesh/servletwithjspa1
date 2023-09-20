@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import studentwithjsp.dao.StudentDao;
 import studentwithjsp.dto.Student;
@@ -21,7 +22,16 @@ public class UpdateController extends HttpServlet{
 		StudentDao studentDao=new StudentDao();
 		Student dbStudent=studentDao.findstudentById(id);
 		req.setAttribute("student", dbStudent);
-		RequestDispatcher dispatcher=req.getRequestDispatcher("edit.jsp");
-		dispatcher.forward(req, resp);
+		HttpSession httpSession=req.getSession();
+		String name=(String)httpSession.getAttribute("namewhologgedin");
+		if(name!=null) {
+			RequestDispatcher dispatcher=req.getRequestDispatcher("edit.jsp");
+			dispatcher.forward(req, resp);
+		}else {
+			req.setAttribute("message", "HeyIdiotFellowFirstLogginandthencmebacktothiseditpage");
+			RequestDispatcher dispatcher=req.getRequestDispatcher("login.jsp");
+			dispatcher.forward(req, resp);
+		}
+	
 	}
 }
